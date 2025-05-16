@@ -13,13 +13,13 @@ const themeIcon = document.querySelector('.theme-icon');
 function initTheme() {
     const darkTheme = localStorage.getItem('darkTheme') === 'true';
     document.body.setAttribute('data-theme', darkTheme ? 'dark' : 'light');
-    themeIcon.src = darkTheme ? '../todo-app-main/images/icon-sun.svg' : '../todo-app-main/images/icon-moon.svg';
+    themeIcon.src = darkTheme ? './img/icon-sun.svg' : './img/icon-moon.svg';
 }
 
 themeToggle.addEventListener('click', () => {
     const isDark = document.body.getAttribute('data-theme') === 'dark';
     document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    themeIcon.src = isDark ? '../todo-app-main/images/icon-moon.svg' : '../todo-app-main/images/icon-sun.svg';
+    themeIcon.src = isDark ? './img/icon-moon.svg' : './img/icon-sun.svg';
     localStorage.setItem('darkTheme', !isDark);
 });
 
@@ -34,7 +34,7 @@ function createTodoElement(todo) {
         <span class="checkbox ${todo.completed ? 'checked' : ''}"></span>
         <span class="todo-text">${todo.text}</span>
         <button class="delete-btn">
-            <img src="../todo-app-main/images/icon-cross.svg" alt="Delete">
+            <img src="./img/icon-cross.svg" alt="Delete">
         </button>
     `;
 
@@ -79,7 +79,7 @@ function deleteTodo(id) {
     renderTodos();
 }
 
-// Clear completed todos
+
 clearCompleted.addEventListener('click', () => {
     todos = todos.filter(todo => !todo.completed);
     saveTodos();

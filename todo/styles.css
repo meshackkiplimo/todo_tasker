@@ -6,7 +6,7 @@
     --text-muted: hsl(236, 9%, 61%);
     --border-color: hsl(233, 11%, 84%);
     --hover-color: hsl(235, 19%, 35%);
-    --bg-image: url('../todo-app-main/images/bg-desktop-light.jpg');
+    --bg-image: url('./img/bg-desktop-light.jpg');
 }
 
 [data-theme="dark"] {
@@ -17,7 +17,7 @@
     --text-muted: hsl(234, 11%, 52%);
     --border-color: hsl(237, 14%, 26%);
     --hover-color: hsl(236, 33%, 92%);
-    --bg-image: url('../todo-app-main/images/bg-desktop-dark.jpg');
+    --bg-image: url('./img/bg-desktop-dark.jpg');
 }
 
 * {
@@ -209,11 +209,11 @@ h1 {
 
 @media (max-width: 375px) {
     body::before {
-        background-image: url('../todo-app-main/images/bg-mobile-light.jpg');
+        background-image: url('./img/bg-mobile-light.jpg');
     }
 
     [data-theme="dark"] body::before {
-        background-image: url('../todo-app-main/images/bg-mobile-dark.jpg');
+        background-image: url('./img/bg-mobile-dark.jpg');
     }
 
     .container {
