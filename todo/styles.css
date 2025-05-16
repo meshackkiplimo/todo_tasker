@@ -1,0 +1,242 @@
+:root {
+   
+    --bg-color: hsl(0, 0%, 98%);
+    --todo-bg: white;
+    --text-color: hsl(235, 19%, 35%);
+    --text-muted: hsl(236, 9%, 61%);
+    --border-color: hsl(233, 11%, 84%);
+    --hover-color: hsl(235, 19%, 35%);
+    --bg-image: url('../todo-app-main/images/bg-desktop-light.jpg');
+}
+
+[data-theme="dark"] {
+   
+    --bg-color: hsl(235, 21%, 11%);
+    --todo-bg: hsl(235, 24%, 19%);
+    --text-color: hsl(234, 39%, 85%);
+    --text-muted: hsl(234, 11%, 52%);
+    --border-color: hsl(237, 14%, 26%);
+    --hover-color: hsl(236, 33%, 92%);
+    --bg-image: url('../todo-app-main/images/bg-desktop-dark.jpg');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+
+    background-color: var(--bg-color);
+    font-size: 18px;
+    min-height: 100vh;
+    transition: background-color 0.3s;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 300px;
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+    transition: background-image 0.3s;
+}
+
+.container {
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 70px 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 12px;
+    font-size: 2.5rem;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.todo-input-wrapper,
+.todo-list-container {
+    background-color: var(--todo-bg);
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.todo-input-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    gap: 20px;
+}
+
+.checkbox {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.todo-input {
+    flex: 1;
+    border: none;
+    background: none;
+    color: var(--text-color);
+    font-size: 18px;
+    font-family: inherit;
+    outline: none;
+}
+
+.todo-input::placeholder {
+    color: var(--text-muted);
+}
+
+.todo-list {
+    list-style: none;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    gap: 20px;
+}
+
+.todo-item.completed .todo-text {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.todo-item .checkbox {
+    position: relative;
+}
+
+.todo-item .checkbox.checked {
+    background: linear-gradient(135deg, hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+    border: none;
+}
+
+.todo-item .checkbox.checked::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 5px;
+    width: 6px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.todo-text {
+    flex: 1;
+    color: var(--text-color);
+}
+
+.delete-btn {
+    opacity: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.todo-item:hover .delete-btn {
+    opacity: 1;
+}
+
+.todo-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.filters {
+    display: flex;
+    gap: 15px;
+}
+
+.filter,
+.clear-completed {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+}
+
+.filter:hover,
+.clear-completed:hover {
+    color: var(--hover-color);
+}
+
+.filter.active {
+    color: hsl(220, 98%, 61%);
+}
+
+.drag-drop-text {
+    text-align: center;
+    color: var(--text-muted);
+    margin-top: 40px;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 375px) {
+    body::before {
+        background-image: url('../todo-app-main/images/bg-mobile-light.jpg');
+    }
+
+    [data-theme="dark"] body::before {
+        background-image: url('../todo-app-main/images/bg-mobile-dark.jpg');
+    }
+
+    .container {
+        padding: 40px 20px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .filters {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -70px;
+        justify-content: center;
+        background-color: var(--todo-bg);
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .todo-footer {
+        position: relative;
+    }
+}

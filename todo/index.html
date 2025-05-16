@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TODO</h1>
+            <button class="theme-toggle">
+                <img src="../todo-app-main/images/icon-sun.svg" alt="Theme toggle" class="theme-icon">
+            </button>
+        </header>
+        
+        <div class="todo-input-wrapper">
+            <span class="checkbox"></span>
+            <input type="text" class="todo-input" placeholder="Create a new todo...">
+        </div>
+
+        <div class="todo-list-container">
+            <ul class="todo-list"></ul>
+            
+            <div class="todo-footer">
+                <span class="items-left">0 items left</span>
+                <div class="filters">
+                    <button class="filter active" data-filter="all">All</button>
+                    <button class="filter" data-filter="active">Active</button>
+                    <button class="filter" data-filter="completed">Completed</button>
+                </div>
+                <button class="clear-completed">Clear Completed</button>
+            </div>
+        </div>
+
+        <p class="drag-drop-text">Drag and drop to reorder list</p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
