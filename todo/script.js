@@ -1,171 +1,192 @@
-let todos = JSON.parse(localStorage.getItem('todos')) || [];
+var list = JSON.parse(localStorage.getItem('todos')) || [];
 
+var input = document.querySelector('.todo-input');
+var todoContainer = document.querySelector('.todo-list');
+var remainingItems = document.querySelector('.items-left');
+var filterBtns = document.querySelectorAll('.filter');
+var clearBtn = document.querySelector('.clear-completed');
+var darkModeBtn = document.querySelector('.theme-toggle');
+var darkModeImg = document.querySelector('.theme-icon');
 
-const todoInput = document.querySelector('.todo-input');
-const todoList = document.querySelector('.todo-list');
-const itemsLeft = document.querySelector('.items-left');
-const filters = document.querySelectorAll('.filter');
-const clearCompleted = document.querySelector('.clear-completed');
-const themeToggle = document.querySelector('.theme-toggle');
-const themeIcon = document.querySelector('.theme-icon');
-
-
-function initTheme() {
-    const darkTheme = localStorage.getItem('darkTheme') === 'true';
-    document.body.setAttribute('data-theme', darkTheme ? 'dark' : 'light');
-    themeIcon.src = darkTheme ? './img/icon-sun.svg' : './img/icon-moon.svg';
+function setTheme() {
+    var isDarkMode = localStorage.getItem('darkTheme') === 'true';
+    if (isDarkMode !== null) {
+        document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+        darkModeImg.src = isDarkMode ? './img/icon-sun.svg' : './img/icon-moon.svg';
+    }
 }
 
-themeToggle.addEventListener('click', () => {
-    const isDark = document.body.getAttribute('data-theme') === 'dark';
+darkModeBtn.addEventListener('click', function() {
+    var isDark = document.body.getAttribute('data-theme') === 'dark';
     document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    themeIcon.src = isDark ? './img/icon-moon.svg' : './img/icon-sun.svg';
+    darkModeImg.src = isDark ? './img/icon-moon.svg' : './img/icon-sun.svg';
     localStorage.setItem('darkTheme', !isDark);
 });
 
-// Create todo item
-function createTodoElement(todo) {
-    const li = document.createElement('li');
-    li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
-    li.draggable = true;
-    li.dataset.id = todo.id;
-
-    li.innerHTML = `
-        <span class="checkbox ${todo.completed ? 'checked' : ''}"></span>
-        <span class="todo-text">${todo.text}</span>
+function makeNewTodoItem(item) {
+    var todoItem = document.createElement('li');
+    todoItem.className = item.completed ? 'todo-item completed' : 'todo-item';
+    todoItem.draggable = true;
+    todoItem.dataset.id = item.id;
+    
+    // add the inner stuff
+    todoItem.innerHTML = `
+        <span class="checkbox ${item.completed ? 'checked' : ''}"></span>
+        <span class="todo-text">${item.text}</span>
         <button class="delete-btn">
             <img src="./img/icon-cross.svg" alt="Delete">
         </button>
     `;
 
-  
-    const checkbox = li.querySelector('.checkbox');
-    checkbox.addEventListener('click', () => toggleTodo(todo.id));
+    // handle clicking checkbox
+    var check = todoItem.querySelector('.checkbox');
+    check.addEventListener('click', function() {
+        markTodoDone(item.id);
+    });
 
-    const deleteBtn = li.querySelector('.delete-btn');
-    deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
+    // handle delete button
+    var delButton = todoItem.querySelector('.delete-btn');
+    delButton.addEventListener('click', function() {
+        removeTodo(item.id);
+    });
 
-    return li;
+    return todoItem;
 }
 
-todoInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && todoInput.value.trim()) {
-        const newTodo = {
-            id: Date.now(),
-            text: todoInput.value.trim(),
+// add new todo when enter is pressed
+input.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && input.value.trim() !== '') {
+        var newItem = {
+            id: new Date().getTime(),
+            text: input.value.trim(),
             completed: false
         };
-
-        todos.push(newTodo);
-        saveTodos();
-        renderTodos();
-        todoInput.value = '';
+        
+        list.push(newItem);
+        saveToStorage();
+        showTodos();
+        input.value = '';
     }
 });
 
-
-function toggleTodo(id) {
-    todos = todos.map(todo => 
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    );
-    saveTodos();
-    renderTodos();
+function markTodoDone(id) {
+    for(var i = 0; i < list.length; i++) {
+        if(list[i].id === id) {
+            list[i].completed = !list[i].completed;
+            break;
+        }
+    }
+    saveToStorage();
+    showTodos();
 }
 
-
-function deleteTodo(id) {
-    todos = todos.filter(todo => todo.id !== id);
-    saveTodos();
-    renderTodos();
+function removeTodo(id) {
+    list = list.filter(function(todo) {
+        return todo.id !== id;
+    });
+    saveToStorage();
+    showTodos();
 }
 
-
-clearCompleted.addEventListener('click', () => {
-    todos = todos.filter(todo => !todo.completed);
-    saveTodos();
-    renderTodos();
+clearBtn.addEventListener('click', function() {
+    list = list.filter(function(todo) {
+        return !todo.completed;
+    });
+    saveToStorage();
+    showTodos();
 });
 
-// Filter todos
-let currentFilter = 'all';
-filters.forEach(filter => {
-    filter.addEventListener('click', () => {
-        filters.forEach(f => f.classList.remove('active'));
-        filter.classList.add('active');
-        currentFilter = filter.dataset.filter;
-        renderTodos();
+var currentView = 'all';
+filterBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        filterBtns.forEach(function(b) {
+            b.classList.remove('active');
+        });
+        btn.classList.add('active');
+        currentView = btn.dataset.filter;
+        showTodos();
     });
 });
 
-// Render todos
-function renderTodos() {
-    const filteredTodos = todos.filter(todo => {
-        if (currentFilter === 'active') return !todo.completed;
-        if (currentFilter === 'completed') return todo.completed;
+function showTodos() {
+    var todosToShow = list.filter(function(todo) {
+        if(currentView === 'active') {
+            return !todo.completed;
+        } else if(currentView === 'completed') {
+            return todo.completed;
+        }
         return true;
     });
 
-    todoList.innerHTML = '';
-    filteredTodos.forEach(todo => {
-        todoList.appendChild(createTodoElement(todo));
-    });
+    todoContainer.innerHTML = '';
+    
+    for(var i = 0; i < todosToShow.length; i++) {
+        todoContainer.appendChild(makeNewTodoItem(todosToShow[i]));
+    }
 
-    const activeTodos = todos.filter(todo => !todo.completed).length;
-    itemsLeft.textContent = `${activeTodos} item${activeTodos !== 1 ? 's' : ''} left`;
+    var notDone = list.filter(function(todo) {
+        return !todo.completed;
+    }).length;
+    remainingItems.textContent = notDone + (notDone === 1 ? ' item left' : ' items left');
 }
 
-// Save todos to localStorage
-function saveTodos() {
-    localStorage.setItem('todos', JSON.stringify(todos));
+function saveToStorage() {
+    localStorage.setItem('todos', JSON.stringify(list));
 }
 
-// Drag and drop functionality
-let draggedItem = null;
+var itemBeingDragged = null;
 
-todoList.addEventListener('dragstart', (e) => {
-    draggedItem = e.target;
+todoContainer.addEventListener('dragstart', function(e) {
+    itemBeingDragged = e.target;
     e.target.classList.add('dragging');
 });
 
-todoList.addEventListener('dragend', (e) => {
+todoContainer.addEventListener('dragend', function(e) {
     e.target.classList.remove('dragging');
 });
 
-todoList.addEventListener('dragover', (e) => {
+todoContainer.addEventListener('dragover', function(e) {
     e.preventDefault();
-    const afterElement = getDragAfterElement(todoList, e.clientY);
-    const draggable = document.querySelector('.dragging');
+    var itemToInsertBefore = getItemToInsertBefore(todoContainer, e.clientY);
+    var currentDragItem = document.querySelector('.dragging');
     
-    if (afterElement == null) {
-        todoList.appendChild(draggable);
+    if(!itemToInsertBefore) {
+        todoContainer.appendChild(currentDragItem);
     } else {
-        todoList.insertBefore(draggable, afterElement);
+        todoContainer.insertBefore(currentDragItem, itemToInsertBefore);
     }
 });
 
-function getDragAfterElement(container, y) {
-    const draggableElements = [...container.querySelectorAll('.todo-item:not(.dragging)')];
+function getItemToInsertBefore(container, y) {
+    var draggableItems = [].slice.call(container.querySelectorAll('.todo-item:not(.dragging)'));
 
-    return draggableElements.reduce((closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = y - box.top - box.height / 2;
+    if (draggableItems.length === 0) return null;
 
-        if (offset < 0 && offset > closest.offset) {
-            return { offset: offset, element: child };
-        } else {
-            return closest;
+    var closest = null;
+    var closestOffset = Number.NEGATIVE_INFINITY;
+
+    draggableItems.forEach(function(item) {
+        var box = item.getBoundingClientRect();
+        var offset = y - box.top - box.height / 2;
+
+        if(offset < 0 && offset > closestOffset) {
+            closest = item;
+            closestOffset = offset;
         }
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
+    });
+
+    return closest;
 }
 
-todoList.addEventListener('dragend', () => {
-    const newOrder = [...todoList.querySelectorAll('.todo-item')].map(item => 
-        todos.find(todo => todo.id === parseInt(item.dataset.id))
-    );
-    todos = newOrder;
-    saveTodos();
+todoContainer.addEventListener('dragend', function() {
+    var newOrder = [].slice.call(todoContainer.querySelectorAll('.todo-item')).map(function(item) {
+        return list.find(function(todo) {
+            return todo.id === parseInt(item.dataset.id);
+        });
+    });
+    list = newOrder;
+    saveToStorage();
 });
 
-
-initTheme();
-renderTodos();
+setTheme();
+showTodos();
